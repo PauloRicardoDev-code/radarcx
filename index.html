@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>integraCX — Conexões que transformam experiências</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Ícones Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Fonte Montserrat (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Configurações Customizadas do Tailwind (Paleta Oficial referencia.jpeg) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0F2D4A',      /* Azul-marinho oficial (referencia.jpeg) */
+                            darker: '#091d31',    /* Azul-marinho profundo para hover/gradientes */
+                            light: '#F9F8F4',     /* Off-white / ivório oficial (referencia.jpeg) */
+                            card: '#FFFFFF',      /* Superfície de destaque */
+                            tan: '#D8C9B3',       /* Bege / areia oficial (referencia.jpeg) */
+                            tanLight: '#ece6dc',  /* Destaque ativo de abas e detalhes sutis */
+                            softBlue: '#7A8EA6',  /* Azul suave oficial (referencia.jpeg) */
+                            muted: '#4B5563',     /* Cinza oficial para textos e informações (referencia.jpeg) */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 30px -10px rgba(15, 45, 74, 0.08)',
+                        'elevated': '0 20px 40px -12px rgba(15, 45, 74, 0.18)',
+                        'card-3d': '0 25px 50px -12px rgba(9, 29, 49, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Padronização de seleção de texto */
+        ::selection {
+            background-color: #0F2D4A;
+            color: #F9F8F4;
+        }
+
+        /* Textura de grade sutil para o fundo do mapa */
+        .map-grid-bg {
+            background-color: #f3f0e8;
+            background-image:
+                linear-gradient(to right, rgba(15, 45, 74, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 45, 74, 0.04) 1px, transparent 1px);
+            background-size: 36px 36px;
+        }
+
+        /* Transição suave para os painéis das abas */
+        .tab-panel {
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-panel-hidden {
+            opacity: 0;
+            transform: translateY(12px);
+            pointer-events: none;
+            position: absolute;
+            inset: 0;
+            visibility: hidden;
+        }
+
+        .tab-panel-active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            position: relative;
+            visibility: visible;
+        }
+
+        /* Efeito 3D Flip para o Cartão de Visitas Interativo */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+
+        .transform-style-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+
+<body class="bg-brand-light text-brand-dark font-sans antialiased min-h-screen overflow-x-hidden">
+
+    <!-- ================= HEADER ================= -->
+    <header id="main-header"
+        class="fixed top-0 z-50 w-full bg-brand-light/95 backdrop-blur-md border-b border-brand-dark/10 transition-all duration-300">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 md:px-8">
+
+            <!-- Logo integraCX oficial -->
+            <a href="#inicio" class="group flex items-center focus:outline-none">
+                <img src="logo-integracx.png"
+                    alt="INTEGRACX — Cuidamos da sua empresa, Valorizamos seu cliente"
+                    class="h-9 sm:h-10 md:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]">
+            </a>
+
+            <!-- Navegação Desktop -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#diferencial"
+                    class="nav-link relative py-1 text-xs font-semibold text-brand-dark transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1.5px] after:bg-brand-dark after:transition-transform after:duration-300">
+                    Diferencial
+                </a>
+                <a href="#solucoes"
+                    class="nav-link relative py-1 text-xs font-medium text-brand-muted hover:text-brand-dark transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1.5px] after:bg-brand-dark after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300">
+                    Soluções
+                </a>
+                <a href="#onde-estamos"
+                    class="nav-link relative py-1 text-xs font-medium text-brand-muted hover:text-brand-dark transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1.5px] after:bg-brand-dark after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300">
+                    Onde estamos
+                </a>
+                <a href="#contato"
+                    class="nav-link relative py-1 text-xs font-medium text-brand-muted hover:text-brand-dark transition-colors duration-200 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1.5px] after:bg-brand-dark after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300">
+                    Contato
+                </a>
+            </nav>
+
+            <!-- Botão Menu Mobile -->
+            <button id="menu-btn" aria-label="Abrir Menu"
+                class="md:hidden p-2 text-brand-dark hover:bg-brand-dark/5 rounded transition-colors">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Menu Mobile Dropdown -->
+        <nav id="mobile-menu"
+            class="hidden flex-col bg-brand-light px-6 py-5 md:hidden border-t border-brand-dark/10 shadow-elevated">
+            <a href="#diferencial"
+                class="mobile-link py-3 text-sm font-semibold text-brand-dark border-b border-brand-dark/10">Diferencial</a>
+            <a href="#solucoes"
+                class="mobile-link py-3 text-sm font-medium text-brand-muted hover:text-brand-dark border-b border-brand-dark/10">Soluções</a>
+            <a href="#onde-estamos"
+                class="mobile-link py-3 text-sm font-medium text-brand-muted hover:text-brand-dark border-b border-brand-dark/10">Onde
+                estamos</a>
+            <a href="#contato"
+                class="mobile-link pt-3 pb-1 text-sm font-medium text-brand-muted hover:text-brand-dark">Contato</a>
+        </nav>
+    </header>
+
+    <main class="pt-20">
+
+        <!-- ================= HERO ================= -->
+        <section id="inicio" class="relative px-5 pt-16 pb-24 md:px-8 md:pt-24 md:pb-32 overflow-hidden">
+            <!-- Arco decorativo superior direito (Linhas de conexão) -->
+            <div
+                class="pointer-events-none absolute -top-40 -right-40 w-[420px] h-[420px] rounded-full border border-brand-dark/10">
+            </div>
+
+            <div class="mx-auto max-w-6xl grid md:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-center">
+                <!-- Coluna de Texto -->
+                <div class="reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                    <p class="mb-4 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.22em] text-brand-dark/70">
+                        PESSOAS · PROCESSOS · RESULTADOS
+                    </p>
+                    <h1
+                        class="text-4xl sm:text-5xl lg:text-[52px] font-extrabold leading-[1.1] tracking-tight mb-6 text-brand-dark">
+                        Conexões que transformam experiências.
+                    </h1>
+                    <p class="text-sm md:text-[15px] leading-[1.7] text-brand-muted mb-9 max-w-xl">
+                        A integraCX atua na análise, otimização e transformação dos processos de relacionamento entre
+                        empresas e clientes. Por meio de auditorias, consultorias e ferramentas de inteligência,
+                        identificamos falhas operacionais, oportunidades de melhoria e pontos de atrito que impactam a
+                        experiência do consumidor e os resultados do negócio.
+                    </p>
+                    <a href="#contato"
+                        class="inline-flex items-center justify-center bg-brand-dark text-white text-xs md:text-sm font-semibold px-7 py-4 rounded-[3px] shadow-soft hover:bg-brand-darker hover:-translate-y-0.5 hover:shadow-elevated transition-all duration-300">
+                        Transformar Minha Operação
+                    </a>
+                </div>
+
+                <!-- Ilustração Símbolo Oficial integraCX com Órbitas -->
+                <div
+                    class="reveal opacity-0 translate-y-8 transition-all duration-700 delay-150 ease-out relative flex justify-center items-center">
+                    <div class="relative w-full max-w-[390px] aspect-square flex items-center justify-center">
+                        <!-- Sombra circular suave de fundo -->
+                        <div class="absolute inset-6 rounded-full bg-brand-tan/25 blur-2xl -z-10"></div>
+
+                        <!-- Círculos concêntricos e linha orbital -->
+                        <svg viewBox="0 0 360 360" class="absolute inset-0 w-full h-full overflow-visible pointer-events-none" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="180" cy="180" r="148" stroke="#0F2D4A" stroke-opacity="0.08" stroke-width="1" />
+                            <circle cx="180" cy="180" r="126" stroke="#0F2D4A" stroke-opacity="0.08" stroke-width="1"
+                                stroke-dasharray="3 5" />
+                            <circle cx="180" cy="180" r="102" stroke="#0F2D4A" stroke-opacity="0.06" stroke-width="1" />
+
+                            <!-- Linha orbital fina cruzando o símbolo com nós nas pontas -->
+                            <path d="M46 240 C110 268, 240 200, 314 106" stroke="#0F2D4A" stroke-width="1.5"
+                                stroke-opacity="0.75" fill="none" />
+                            <circle cx="46" cy="240" r="3.5" fill="#0F2D4A" />
+                            <circle cx="314" cy="106" r="4" fill="#0F2D4A" />
+                        </svg>
+
+                        <!-- Símbolo Oficial CX em Alta Definição -->
+                        <img src="logo-simbolo.png"
+                            alt="Símbolo INTEGRACX"
+                            class="relative z-10 w-[76%] h-auto object-contain drop-shadow-xl select-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalhe de recorte inferior esquerdo conforme template -->
+            <div class="hidden md:block absolute bottom-0 left-0 w-72 h-2 bg-white/60"></div>
+        </section>
+
+        <!-- ================= DIFERENCIAL ================= -->
+        <section id="diferencial" class="relative bg-brand-dark text-white overflow-hidden">
+            <!-- Imagem direita com fusão em gradiente e linhas de conexão -->
+            <div class="absolute inset-y-0 right-0 w-full md:w-[58%] pointer-events-none">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1400&q=80"
+                    alt="Inteligência e Tecnologia integraCX"
+                    class="w-full h-full object-cover object-center opacity-55 mix-blend-luminosity">
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-dark via-brand-dark/85 to-brand-dark/20">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-brand-dark/50">
+                </div>
+
+                <!-- Vetor de linha curva e pontos sobre a imagem (fiel ao template) -->
+                <svg class="hidden md:block absolute inset-0 w-full h-full" viewBox="0 0 600 500" fill="none"
+                    preserveAspectRatio="none">
+                    <path d="M120 430 C260 350, 480 280, 580 110" stroke="#D8C9B3" stroke-opacity="0.7"
+                        stroke-width="1.5" />
+                    <path d="M140 80 C280 150, 440 160, 590 280" stroke="#D8C9B3" stroke-opacity="0.25"
+                        stroke-width="1" />
+                    <circle cx="120" cy="430" r="4" fill="#D8C9B3" />
+                    <circle cx="580" cy="110" r="4" fill="#D8C9B3" />
+                </svg>
+            </div>
+
+            <div class="relative z-10 mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-36">
+                <div class="max-w-lg reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                    <p class="mb-3 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.22em] text-brand-tan">
+                        O QUE NOS MOVE
+                    </p>
+                    <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold tracking-tight mb-6 leading-tight">
+                        O Diferencial integraCX
+                    </h2>
+                    <p class="text-sm md:text-[15px] leading-[1.75] text-gray-300 font-normal">
+                        Nosso objetivo é transformar informações em decisões estratégicas, tornando as operações mais
+                        eficientes, os atendimentos mais qualificados e os relacionamentos mais duradouros. Não nos
+                        limitamos a identificar problemas. Transformamos diagnósticos em ações práticas. integraCX:
+                        conexões que transformam experiências.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SOLUÇÕES (TABS) ================= -->
+        <section id="solucoes" class="bg-brand-light px-5 pt-16 pb-24 md:px-8 md:pt-20 md:pb-32">
+            <div class="mx-auto max-w-6xl">
+
+                <!-- Indicador superior direito 02 / 04 -->
+                <div class="flex justify-end mb-8 reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                    <div
+                        class="inline-flex items-center gap-3 text-[11px] font-semibold tracking-[0.2em] text-brand-muted">
+                        <span class="w-6 h-px bg-brand-muted/50"></span>
+                        <span>02 / 04</span>
+                    </div>
+                </div>
+
+                <!-- Cabeçalho da Seção -->
+                <div class="mb-14 reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                    <p class="mb-3 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.22em] text-brand-muted">
+                        SETE PILARES · UMA VISÃO INTEGRADA
+                    </p>
+                    <h2 class="text-2xl sm:text-3xl md:text-[34px] font-extrabold tracking-tight text-brand-dark mb-3">
+                        Nossas Soluções
+                    </h2>
+                    <p class="max-w-lg text-sm md:text-[15px] leading-relaxed text-brand-muted">
+                        Explore cada solução e descubra como transformamos diagnósticos em ações práticas.
+                    </p>
+                </div>
+
+                <!-- Grid Principal: Menu de Abas (Esquerda) + Conteúdo (Direita) -->
+                <div
+                    class="grid md:grid-cols-[1fr_1.65fr] gap-10 lg:gap-16 items-start reveal opacity-0 translate-y-8 transition-all duration-700 delay-100 ease-out">
+
+                    <!-- Lista de 7 Pilares (Tabs) -->
+                    <div class="flex flex-col border-t border-brand-dark/10" role="tablist"
+                        aria-label="Nossas Soluções">
+                        <button type="button" role="tab" aria-selected="true" data-target="tab-1"
+                            class="tab-btn group flex items-center justify-between py-4 px-4 text-left border-b border-brand-dark/10 border-l-[3px] border-l-brand-dark bg-brand-tanLight/70 transition-all duration-300">
+                            <span class="tab-num text-[11px] font-semibold text-brand-dark/70 w-8">01</span>
+                            <span class="tab-title flex-1 text-xs sm:text-sm font-bold text-brand-dark pr-3">
+                                Auditoria de Qualidade
+                            </span>
+                            <i data-lucide="arrow-up-right"
+                                class="tab-icon w-4 h-4 text-brand-dark/70 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        </button>
+
+                        <button type="button" role="tab" aria-selected="false" data-target="tab-2"
+                            class="tab-btn group flex items-center justify-between py-4 px-4 text-left border-b border-brand-dark/10 border-l-[3px] border-l-transparent hover:bg-brand-tanLight/40 transition-all duration-300">
+                            <span class="tab-num text-[11px] font-semibold text-brand-muted/70 w-8">02</span>
+                            <span
+                                class="tab-title flex-1 text-xs sm:text-sm font-semibold text-brand-dark/75 group-hover:text-brand-dark pr-3">
+                                Auditoria de Retenção e Cancelamento
+                            </span>
+                            <i data-lucide="arrow-up-right"
+                                class="tab-icon w-4 h-4 text-brand-muted/60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        </button>
+
+                        <button type="button" role="tab" aria-selected="false" data-target="tab-3"
+                            class="tab-btn group flex items-center justify-between py-4 px-4 text-left border-b border-brand-dark/10 border-l-[3px] border-l-transparent hover:bg-brand-tanLight/40 transition-all duration-300">
+                            <span class="tab-num text-[11px] font-semibold text-brand-muted/70 w-8">03</span>
+                            <span
+                                class="tab-title flex-1 text-xs sm:text-sm font-semibold text-brand-dark/75 group-hover:text-brand-dark pr-3">
+                                Consultoria Comercial
+                            </span>
+                            <i data-lucide="arrow-up-right"
+                                class="tab-icon w-4 h-4 text-brand-muted/60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        </button>
+
+                        <button type="button" role="tab" aria-selected="false" data-target="tab-4"
+                            class="tab-btn group flex items-center justify-between py-4 px-4 text-left border-b border-brand-dark/10 border-l-[3px] border-l-transparent hover:bg-brand-tanLight/40 transition-all duration-300">
+                            <span class="tab-num text-[11px] font-semibold text-brand-muted/70 w-8">04</span>
+                            <span
+                                class="tab-title flex-1 text-xs sm:text-sm font-semibold text-brand-dark/75 group-hover:text-brand-dark pr-3">
+                                Mapeamento e Redesenho da Jornada do Cliente
+                            </span>
+                            <i data-lucide="arrow-up-right"
+                                class="tab-icon w-4 h-4 text-brand-muted/60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        </button>
+
+                        <button type="button" role="tab" aria-selected="false" data-target="tab-5"
+                            class="tab-btn group flex items-center justify-between py-4 px-4 text-left border-b border-brand-dark/10 border-l-[3px] border-l-transparent hover:bg-brand-tanLight/40 transition-all duration-300">
+                            <span class="tab-num text-[11px] font-semibold text-brand-muted/70 w-8">05</span>
+                            <span
+                                class="tab-title flex-1 text-xs sm:text-sm font-semibold text-brand-dark/75 group-hover:text-brand-dark pr-3">
+                                Auditoria de Suporte Técnico
+                            </span>
+                            <i data-lucide="arrow-up-right"
+                                class="tab-icon w-4 h-4 text-brand-muted/60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        </button>
+
+                        <button type="button" role="tab" aria-selected="false" data-target="tab-6"
+                            class="tab-btn group flex items-center justify-between py-4 px-4 text-left border-b border-brand-dark/10 border-l-[3px] border-l-transparent hover:bg-brand-tanLight/40 transition-all duration-300">
+                            <span class="tab-num text-[11px] font-semibold text-brand-muted/70 w-8">06</span>
+                            <span
+                                class="tab-title flex-1 text-xs sm:text-sm font-semibold text-brand-dark/75 group-hover:text-brand-dark pr-3">
+                                Pesquisa de Satisfação
+                            </span>
+                            <i data-lucide="arrow-up-right"
+                                class="tab-icon w-4 h-4 text-brand-muted/60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        </button>
+
+                        <button type="button" role="tab" aria-selected="false" data-target="tab-7"
+                            class="tab-btn group flex items-center justify-between py-4 px-4 text-left border-b border-brand-dark/10 border-l-[3px] border-l-transparent hover:bg-brand-tanLight/40 transition-all duration-300">
+                            <span class="tab-num text-[11px] font-semibold text-brand-muted/70 w-8">07</span>
+                            <span
+                                class="tab-title flex-1 text-xs sm:text-sm font-semibold text-brand-dark/75 group-hover:text-brand-dark pr-3">
+                                Gestão Omnichannel
+                            </span>
+                            <i data-lucide="arrow-up-right"
+                                class="tab-icon w-4 h-4 text-brand-muted/60 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Painéis de Conteúdo das Abas -->
+                    <div class="relative md:border-l md:border-brand-dark/15 md:pl-12 lg:pl-16 min-h-[320px] py-2">
+                        <!-- Ponto indicador sobre a linha divisória -->
+                        <div class="hidden md:block absolute -left-[4.5px] top-4 w-2 h-2 bg-brand-dark rounded-full">
+                        </div>
+
+                        <div class="relative">
+                            <!-- Tab 1: Auditoria de Qualidade -->
+                            <div id="tab-1" class="tab-panel tab-panel-active">
+                                <h3 class="text-lg md:text-xl font-bold text-brand-dark mb-3">
+                                    Garantia de qualidade em cada interação.
+                                </h3>
+                                <p class="text-sm md:text-[15px] text-brand-muted mb-9 leading-relaxed max-w-xl">
+                                    Avaliamos a qualidade dos atendimentos. Analisamos comunicação, postura e resolução.
+                                    Acompanhamento mensal, identificação de falhas e relatórios.
+                                </p>
+
+                                <h4 class="text-xs font-bold text-brand-dark mb-5">O que entregamos</h4>
+                                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Avaliação de
+                                            atendimentos</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Identificação de falhas</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Monitoramento</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Relatórios</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Recomendações</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 2: Auditoria de Retenção e Cancelamento -->
+                            <div id="tab-2" class="tab-panel tab-panel-hidden">
+                                <h3 class="text-lg md:text-xl font-bold text-brand-dark mb-3">
+                                    Foco em manter, fidelizar e recuperar clientes.
+                                </h3>
+                                <p class="text-sm md:text-[15px] text-brand-muted mb-9 leading-relaxed max-w-xl">
+                                    Investigamos as causas reais de churn e auditamos as abordagens de retenção.
+                                    Desenvolvemos roteiros argumentativos e fluxos preventivos para reduzir
+                                    cancelamentos.
+                                </p>
+
+                                <h4 class="text-xs font-bold text-brand-dark mb-5">O que entregamos</h4>
+                                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Diagnóstico de motivos de
+                                            churn</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Auditoria de ofertas de
+                                            retenção</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Matriz de reversão
+                                            estratégica</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Indicadores de LTV e
+                                            Churn</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Plano de ação corretivo</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 3: Consultoria Comercial -->
+                            <div id="tab-3" class="tab-panel tab-panel-hidden">
+                                <h3 class="text-lg md:text-xl font-bold text-brand-dark mb-3">
+                                    Estruturação e alta performance em processos comerciais.
+                                </h3>
+                                <p class="text-sm md:text-[15px] text-brand-muted mb-9 leading-relaxed max-w-xl">
+                                    Aprimoramos o funil de vendas de ponta a ponta, alinhando discurso comercial,
+                                    qualificação de leads e cadência de fechamento para conversões mais assertivas.
+                                </p>
+
+                                <h4 class="text-xs font-bold text-brand-dark mb-5">O que entregamos</h4>
+                                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Análise do funil de
+                                            conversão</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Playbook e roteiros de
+                                            vendas</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Treinamento de abordagem
+                                            consultiva</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Acompanhamento de metas e
+                                            KPIs</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 4: Mapeamento e Redesenho da Jornada do Cliente -->
+                            <div id="tab-4" class="tab-panel tab-panel-hidden">
+                                <h3 class="text-lg md:text-xl font-bold text-brand-dark mb-3">
+                                    Visão completa de cada ponto de contato com a sua marca.
+                                </h3>
+                                <p class="text-sm md:text-[15px] text-brand-muted mb-9 leading-relaxed max-w-xl">
+                                    Identificamos gargalos, atritos e momentos da verdade ao longo de todo o ciclo de
+                                    vida do cliente, redesenhando fluxos para experiências fluidas e memoráveis.
+                                </p>
+
+                                <h4 class="text-xs font-bold text-brand-dark mb-5">O que entregamos</h4>
+                                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Mapa visual da jornada (As-Is
+                                            / To-Be)</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Identificação de pontos de
+                                            atrito</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Padronização de SLAs
+                                            internos</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Blueprint de serviços
+                                            integrado</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 5: Auditoria de Suporte Técnico -->
+                            <div id="tab-5" class="tab-panel tab-panel-hidden">
+                                <h3 class="text-lg md:text-xl font-bold text-brand-dark mb-3">
+                                    Eficiência técnica aliada à empatia no atendimento.
+                                </h3>
+                                <p class="text-sm md:text-[15px] text-brand-muted mb-9 leading-relaxed max-w-xl">
+                                    Avaliamos a precisão de diagnósticos técnicos, tempo médio de resolução (TMR) e
+                                    resolução no primeiro contato (FCR), reduzindo rechamadas e visitas improdutivas.
+                                </p>
+
+                                <h4 class="text-xs font-bold text-brand-dark mb-5">O que entregamos</h4>
+                                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Auditoria de FCR e
+                                            reincidência</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Revisão de árvores de
+                                            diagnóstico</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Linguagem acessível ao
+                                            cliente</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Otimização de escalonamento
+                                            N1/N2</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 6: Pesquisa de Satisfação -->
+                            <div id="tab-6" class="tab-panel tab-panel-hidden">
+                                <h3 class="text-lg md:text-xl font-bold text-brand-dark mb-3">
+                                    A voz do cliente transformada em inteligência acionável.
+                                </h3>
+                                <p class="text-sm md:text-[15px] text-brand-muted mb-9 leading-relaxed max-w-xl">
+                                    Estruturamos e analisamos indicadores como NPS, CSAT e CES para captar a percepção
+                                    real do consumidor e fechar o ciclo de feedback com rapidez.
+                                </p>
+
+                                <h4 class="text-xs font-bold text-brand-dark mb-5">O que entregamos</h4>
+                                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Implementação de NPS, CSAT e
+                                            CES</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Análise de sentimento e
+                                            verbatins</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Tratativa de detratores (Close
+                                            the Loop)</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Dashboards executivos
+                                            mensais</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab 7: Gestão Omnichannel -->
+                            <div id="tab-7" class="tab-panel tab-panel-hidden">
+                                <h3 class="text-lg md:text-xl font-bold text-brand-dark mb-3">
+                                    Integração fluida entre todos os canais de relacionamento.
+                                </h3>
+                                <p class="text-sm md:text-[15px] text-brand-muted mb-9 leading-relaxed max-w-xl">
+                                    Unificamos a experiência entre voz, WhatsApp, chat, e-mail e redes sociais,
+                                    garantindo contexto contínuo, padronização de tom de voz e agilidade operacional.
+                                </p>
+
+                                <h4 class="text-xs font-bold text-brand-dark mb-5">O que entregamos</h4>
+                                <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Diagnóstico de fluxos de
+                                            chatbots e URA</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Transbordo inteligente para
+                                            humano</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Guia de tom de voz
+                                            multicanal</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 border-b border-brand-dark/10 pb-3">
+                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                        <span class="text-xs md:text-sm text-brand-muted">Dimensionamento e
+                                            produtividade</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= ONDE ESTAMOS ================= -->
+        <section id="onde-estamos" class="bg-brand-tan px-5 pt-14 pb-24 md:px-8 md:pt-16 md:pb-28">
+            <div class="mx-auto max-w-6xl">
+
+                <!-- Indicador superior direito 03 / 04 -->
+                <div class="flex justify-end mb-10 reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                    <div
+                        class="inline-flex items-center gap-3 text-[11px] font-semibold tracking-[0.2em] text-brand-dark/75">
+                        <span class="w-6 h-px bg-brand-dark/50"></span>
+                        <span>03 / 04</span>
+                    </div>
+                </div>
+
+                <!-- Dois Cards Independentes Conectados (Fiel ao Template Radar CX.png) -->
+                <div
+                    class="relative grid md:grid-cols-[1.15fr_1fr] gap-8 md:gap-10 items-stretch reveal opacity-0 translate-y-8 transition-all duration-700 delay-100 ease-out">
+
+                    <!-- Linha conectora horizontal entre os dois blocos no desktop -->
+                    <div
+                        class="hidden md:block absolute top-[55%] left-[53.5%] -translate-x-1/2 -translate-y-1/2 w-12 h-px bg-brand-dark/50 z-0">
+                    </div>
+
+                    <!-- CARD ESQUERDA: MAPA ESTILIZADO -->
+                    <div
+                        class="relative z-10 bg-brand-light p-3 sm:p-4 shadow-soft border border-brand-dark/10 flex flex-col">
+                        <div
+                            class="relative map-grid-bg flex-1 min-h-[380px] sm:min-h-[430px] border border-brand-dark/10 flex items-center justify-center overflow-hidden">
+
+                            <!-- Vetores de Rotas e Conexões (Fiel ao Template) -->
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 500 440" fill="none"
+                                preserveAspectRatio="none">
+                                <!-- Curva sólida azul escuro -->
+                                <path d="M-10 115 C140 155, 220 60, 320 175 C390 255, 440 330, 515 365" stroke="#0F2D4A"
+                                    stroke-opacity="0.55" stroke-width="2" fill="none" />
+                                <!-- Curva tracejada azul escuro -->
+                                <path
+                                    d="M-10 350 C90 280, 145 235, 220 295 C295 355, 330 345, 385 265 C430 200, 465 180, 510 190"
+                                    stroke="#0F2D4A" stroke-opacity="0.7" stroke-width="1.8" stroke-dasharray="5 6"
+                                    fill="none" />
+                                <!-- Curva diagonal suave em tom bege/tan -->
+                                <path d="M85 450 C175 340, 290 220, 445 105" stroke="#D8C9B3" stroke-width="2.5"
+                                    fill="none" />
+
+                                <!-- Nós / Pontos sobre as rotas -->
+                                <circle cx="170" cy="268" r="3.5" fill="#0F2D4A" />
+                                <circle cx="358" cy="303" r="3.5" fill="#0F2D4A" />
+                            </svg>
+
+                            <!-- Pin Central com Halo Bege -->
+                            <div class="relative z-10 flex items-center justify-center translate-x-3 translate-y-4">
+                                <div class="w-10 h-10 rounded-full bg-brand-tan/60 flex items-center justify-center">
+                                    <i data-lucide="map-pin" class="w-5 h-5 text-brand-dark stroke-[2.2]"></i>
+                                </div>
+                            </div>
+
+                            <!-- Card Flutuante Superior Direito -->
+                            <div
+                                class="absolute top-4 right-4 bg-brand-light/95 backdrop-blur-sm p-3.5 pr-8 text-[10px] leading-relaxed text-brand-muted border border-brand-dark/10 max-w-[205px] shadow-sm">
+                                <span id="map-status-text">
+                                    Mapa externo não configurado. Insira um link seguro para abrir a localização.
+                                </span>
+                                <i data-lucide="arrow-up-right"
+                                    class="w-3.5 h-3.5 text-brand-muted/70 absolute top-3 right-3"></i>
+                            </div>
+
+                            <!-- Tag Inferior Esquerda -->
+                            <div
+                                class="absolute bottom-4 left-4 bg-brand-light/95 backdrop-blur-sm py-2.5 px-3.5 border border-brand-dark/10 border-l-2 border-l-brand-dark shadow-sm">
+                                <p id="map-badge-text"
+                                    class="text-[9px] sm:text-[10px] font-bold tracking-[0.18em] uppercase text-brand-dark">
+                                    MAPA DE LOCALIZAÇÃO · CONFIGURAÇÃO PENDENTE
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD DIREITA: PONTOS DE CONTATO -->
+                    <div
+                        class="relative z-10 bg-brand-light p-8 sm:p-10 lg:p-12 shadow-soft border border-brand-dark/10 flex flex-col justify-center my-auto">
+                        <p class="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-brand-muted">
+                            PONTOS DE CONTATO
+                        </p>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-brand-dark mb-3">
+                            Onde estamos
+                        </h2>
+                        <p class="text-xs sm:text-[13px] leading-relaxed text-brand-muted mb-7">
+                            Um espaço para indicar a localização da integraCX. Os dados abaixo estão prontos para
+                            personalização.
+                        </p>
+
+                        <!-- Bloco Endereço -->
+                        <div class="border-l-2 border-brand-dark pl-4 py-0.5 mb-7">
+                            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-brand-muted mb-1">
+                                ENDEREÇO · A CONFIGURAR
+                            </p>
+                            <p class="text-xs sm:text-sm font-bold text-brand-dark">
+                                Endereço ainda não informado
+                            </p>
+                        </div>
+
+                        <!-- Input Link do Mapa -->
+                        <div class="mb-5">
+                            <label for="map-link-input" class="block text-xs font-bold text-brand-dark mb-2">
+                                Link do mapa
+                            </label>
+                            <input id="map-link-input" type="url" placeholder="Link do mapa"
+                                class="w-full text-xs sm:text-sm border border-brand-dark/20 rounded-[2px] px-3.5 py-2.5 bg-white text-brand-dark placeholder-brand-muted/60 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark transition-all">
+                        </div>
+
+                        <!-- Botão Ver no Mapa -->
+                        <button id="open-map-btn" type="button"
+                            class="bg-brand-dark text-white text-xs font-semibold px-6 py-3.5 rounded-[3px] hover:bg-brand-darker hover:-translate-y-0.5 shadow-soft hover:shadow-elevated transition-all duration-300 inline-flex items-center justify-center gap-2 self-start">
+                            <span>Ver no mapa</span>
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CTA FINAL EXPANDIDO (CARTÃO DE VISITAS + FOTOS DO LOCAL + CONVERSÃO) ================= -->
+        <section id="contato" class="relative bg-brand-light">
+
+            <!-- PARTE 1: Bloco Azul-Marinho (#0F2D4A) com Proposta de Valor + Cartão de Visitas Interativo -->
+            <div class="relative bg-brand-dark text-white pt-20 pb-28 md:pt-24 md:pb-36 overflow-hidden">
+
+                <!-- Elementos Gráficos Oficiais de Fundo (Linhas de Conexão da referencia.jpeg) -->
+                <div
+                    class="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full border border-white/10">
+                </div>
+                <div
+                    class="pointer-events-none absolute top-12 right-16 w-72 h-72 rounded-full border border-brand-tan/15">
+                </div>
+                <div
+                    class="pointer-events-none absolute -bottom-32 -left-20 w-80 h-80 rounded-full bg-brand-softBlue/10 blur-3xl">
+                </div>
+
+                <div class="relative z-10 mx-auto max-w-6xl px-5 md:px-8">
+
+                    <!-- Topo da seção: Indicador 04 / 04 -->
+                    <div
+                        class="flex flex-wrap items-center justify-between gap-4 mb-12 reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                        <div>
+                            <p
+                                class="mb-2 text-[10px] md:text-[11px] font-bold uppercase tracking-[0.22em] text-brand-tan">
+                                O PRÓXIMO PASSO COMEÇA AQUI
+                            </p>
+                            <div
+                                class="flex items-center gap-3 text-[10px] font-semibold tracking-[0.2em] text-brand-softBlue">
+                                <span>INTEGRACX</span>
+                                <span class="w-8 h-px bg-brand-softBlue/60"></span>
+                                <span>PRÓXIMA AÇÃO</span>
+                            </div>
+                        </div>
+                        <div
+                            class="inline-flex items-center gap-3 text-[11px] font-semibold tracking-[0.2em] text-brand-tan/80">
+                            <span class="w-6 h-px bg-brand-tan/50"></span>
+                            <span>04 / 04</span>
+                        </div>
+                    </div>
+
+                    <!-- Grid Principal CTA: Informações de Conversão (Esquerda) + Cartão de Visitas (Direita) -->
+                    <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-14 items-center">
+
+                        <!-- Coluna Esquerda: Mais Informações, Benefícios e Canais Diretos -->
+                        <div class="reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+                            <h2
+                                class="text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight leading-[1.15] mb-6 text-white">
+                                Grandes resultados começam com <span class="text-brand-tan">boas conexões.</span>
+                            </h2>
+                            <p class="text-sm md:text-[15px] leading-[1.75] text-gray-300 mb-8 max-w-xl">
+                                Agende uma conversa consultiva com nossos especialistas. Analisamos o momento atual da
+                                sua operação de atendimento, retenção e vendas para desenhar um plano prático de
+                                evolução em Customer Experience.
+                            </p>
+
+                            <!-- 3 Pilares do Atendimento Consultivo -->
+                            <div class="grid sm:grid-cols-3 gap-4 mb-9">
+                                <div
+                                    class="bg-white/[0.04] border border-white/10 p-4 rounded-[3px] hover:border-brand-tan/40 transition-colors">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-brand-tan/15 text-brand-tan flex items-center justify-center mb-3">
+                                        <i data-lucide="compass" class="w-4 h-4"></i>
+                                    </div>
+                                    <h3 class="text-xs font-bold text-white mb-1">Diagnóstico Guiado</h3>
+                                    <p class="text-[11px] text-gray-300/80 leading-relaxed">
+                                        Avaliação preliminar dos gargalos operacionais e de jornada.
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="bg-white/[0.04] border border-white/10 p-4 rounded-[3px] hover:border-brand-tan/40 transition-colors">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-brand-tan/15 text-brand-tan flex items-center justify-center mb-3">
+                                        <i data-lucide="layers" class="w-4 h-4"></i>
+                                    </div>
+                                    <h3 class="text-xs font-bold text-white mb-1">Plano Sob Medida</h3>
+                                    <p class="text-[11px] text-gray-300/80 leading-relaxed">
+                                        Escopo modular integrado aos 7 pilares de excelência em CX.
+                                    </p>
+                                </div>
+
+                                <div
+                                    class="bg-white/[0.04] border border-white/10 p-4 rounded-[3px] hover:border-brand-tan/40 transition-colors">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-brand-tan/15 text-brand-tan flex items-center justify-center mb-3">
+                                        <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                    </div>
+                                    <h3 class="text-xs font-bold text-white mb-1">Impacto Mensurável</h3>
+                                    <p class="text-[11px] text-gray-300/80 leading-relaxed">
+                                        Foco direto em retenção, NPS, FCR e conversão comercial.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Botões de Ação e Metadados de Atendimento -->
+                            <div class="flex flex-wrap items-center gap-4 mb-6">
+                                <a href="https://wa.me/SEUNUMERO" target="_blank" rel="noopener noreferrer"
+                                    class="inline-flex items-center justify-center gap-2.5 bg-brand-tan text-brand-dark text-xs md:text-sm font-extrabold px-7 py-4 rounded-[3px] shadow-elevated hover:bg-white hover:-translate-y-0.5 transition-all duration-300">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    <span>Falar com um Especialista</span>
+                                </a>
+                                <a href="mailto:contato@integracx.com.br"
+                                    class="inline-flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white text-xs md:text-sm font-semibold px-6 py-4 rounded-[3px] border border-white/15 transition-all duration-300">
+                                    <i data-lucide="mail" class="w-4 h-4 text-brand-tan"></i>
+                                    <span>Solicitar Proposta</span>
+                                </a>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] text-gray-300/80">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    Atendimento Seg a Sex · 08h30 às 18h00
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i data-lucide="globe" class="w-3.5 h-3.5 text-brand-tan"></i>
+                                    Consultoria Presencial & Remota em todo o Brasil
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Coluna Direita: Cartão de Visitas Oficial Interativo (Fiel à referencia.jpeg) -->
+                        <div class="reveal opacity-0 translate-y-8 transition-all duration-700 delay-150 ease-out">
+                            <div class="flex items-center justify-between mb-3">
+                                <span
+                                    class="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-tan flex items-center gap-2">
+                                    <i data-lucide="id-card" class="w-3.5 h-3.5"></i>
+                                    Cartão de Visitas Executiva
+                                </span>
+                                <button id="flip-card-btn" type="button"
+                                    class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-white/80 hover:text-brand-tan transition-colors bg-white/5 hover:bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                                    <i data-lucide="repeat" class="w-3 h-3"></i>
+                                    <span id="flip-card-label">Ver Frente Institucional</span>
+                                </button>
+                            </div>
+
+                            <!-- Container 3D do Cartão de Visitas (Frente Contato ivório + Verso Institucional azul-marinho) -->
+                            <div class="perspective-1000 w-full">
+                                <div id="business-card-3d"
+                                    class="relative w-full min-h-[270px] sm:min-h-[290px] transform-style-3d">
+
+                                    <!-- FACE A (Padrão Visível): Cartão Off-White / Ivório com Linhas de Conexão e Dados (Fiel à referencia.jpeg) -->
+                                    <div
+                                        class="backface-hidden relative w-full min-h-[270px] sm:min-h-[290px] bg-brand-light text-brand-dark rounded-[4px] p-6 sm:p-7 shadow-card-3d border border-brand-tan/40 flex flex-col justify-between overflow-hidden">
+
+                                        <!-- Linhas de Conexão no canto direito idênticas ao Cartão Off-White da referencia.jpeg -->
+                                        <svg class="pointer-events-none absolute -right-12 -bottom-12 w-56 h-56 opacity-90"
+                                            viewBox="0 0 220 220" fill="none">
+                                            <circle cx="145" cy="95" r="70" stroke="#D8C9B3" stroke-width="1.2" />
+                                            <circle cx="145" cy="145" r="70" stroke="#0F2D4A" stroke-width="1.3" />
+                                            <!-- Formas e curvas fluidas no canto inferior -->
+                                            <path d="M90 220 C115 170, 165 150, 220 150 L220 220 Z" fill="#D8C9B3"
+                                                fill-opacity="0.35" />
+                                        </svg>
+
+                                        <!-- Cabeçalho do Cartão: Logo INTEGRACX Oficial + Tag Crachá -->
+                                        <div class="relative z-10 flex items-start justify-between gap-4">
+                                            <div>
+                                                <img src="logo-integracx.png"
+                                                    alt="INTEGRACX — Cuidamos da sua empresa, Valorizamos seu cliente"
+                                                    class="h-9 sm:h-10 w-auto object-contain">
+                                            </div>
+
+                                            <span
+                                                class="text-[9px] font-bold uppercase tracking-[0.18em] bg-brand-dark text-brand-light px-2.5 py-1 rounded-[2px] flex-shrink-0">
+                                                CX Advisory
+                                            </span>
+                                        </div>
+
+                                        <!-- Dados da Consultora (Inspirado no Crachá "Carolina Santos - Consultora de CX" da referencia.jpeg) -->
+                                        <div class="relative z-10 my-4 border-l-2 border-brand-dark pl-3.5">
+                                            <p
+                                                class="text-sm sm:text-base font-extrabold text-brand-dark leading-tight">
+                                                Felipe Oliveira
+                                            </p>
+                                            <p class="text-[11px] font-semibold text-brand-muted">
+                                                Consultor Sênior de CX & Excelência Operacional
+                                            </p>
+                                        </div>
+
+                                        <!-- Informações de Contato Direto + Botão Copiar -->
+                                        <div
+                                            class="relative z-10 grid sm:grid-cols-2 gap-2.5 pt-3 border-t border-brand-dark/10 text-[11px]">
+                                            <a href="mailto:contato@integracx.com.br"
+                                                class="flex items-center gap-2 text-brand-dark hover:text-brand-softBlue font-semibold transition-colors truncate">
+                                                <i data-lucide="mail"
+                                                    class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                                <span class="truncate">contato@integracx.com.br</span>
+                                            </a>
+                                            <a href="https://wa.me/9999999" target="_blank" rel="noopener noreferrer"
+                                                class="flex items-center gap-2 text-brand-dark hover:text-brand-softBlue font-semibold transition-colors">
+                                                <i data-lucide="phone"
+                                                    class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                                <span>+55 (11) 99999-0000</span>
+                                            </a>
+                                            <div class="flex items-center gap-2 text-brand-muted">
+                                                <i data-lucide="instagram"
+                                                    class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i>
+                                                <span>@integracx</span>
+                                            </div>
+                                            <div class="flex items-center justify-between sm:justify-end gap-2">
+                                                <button id="copy-vcard-btn" type="button"
+                                                    class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-dark hover:text-brand-softBlue transition-colors">
+                                                    <i data-lucide="copy" class="w-3 h-3"></i>
+                                                    <span id="copy-vcard-text">Copiar Contato</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- FACE B (Rotacionada 180deg): Frente Institucional Azul-Marinho (Fiel ao Cartão Escuro da referencia.jpeg) -->
+                                    <div
+                                        class="backface-hidden rotate-y-180 absolute inset-0 w-full h-full bg-[#0b2239] text-white rounded-[4px] p-7 shadow-card-3d border border-brand-tan/30 flex flex-col items-center justify-center overflow-hidden">
+                                        <!-- Linhas de conexão sutis no cartão escuro -->
+                                        <svg class="pointer-events-none absolute inset-0 w-full h-full opacity-25"
+                                            viewBox="0 0 400 260" fill="none">
+                                            <circle cx="340" cy="60" r="95" stroke="#D8C9B3" stroke-width="1" />
+                                            <circle cx="60" cy="210" r="85" stroke="#7A8EA6" stroke-width="1" />
+                                        </svg>
+
+                                        <div class="relative z-10 flex items-center gap-3.5 mb-3">
+                                            <img src="logo-simbolo.png" alt="Símbolo INTEGRACX"
+                                                class="h-11 sm:h-12 w-auto object-contain drop-shadow-md">
+                                            <span class="text-2xl sm:text-3xl font-extrabold tracking-wider text-white">
+                                                INTEGRACX
+                                            </span>
+                                        </div>
+                                        <p class="relative z-10 text-xs font-medium tracking-[0.08em] text-brand-tan text-center">
+                                            Cuidamos da sua empresa, Valorizamos seu cliente
+                                        </p>
+                                        <span
+                                            class="relative z-10 mt-6 text-[10px] font-mono uppercase tracking-[0.25em] text-brand-softBlue">
+                                            PESSOAS · PROCESSOS · RESULTADOS
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Miniatura Real do Cartão Físico & Crachá da referencia.jpeg -->
+                            <div
+                                class="mt-4 flex items-center justify-between gap-4 bg-white/[0.04] border border-white/10 rounded-[3px] p-3">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-14 h-10 rounded-[2px] overflow-hidden border border-white/15 flex-shrink-0">
+                                        <svg viewBox="2 686 399 374" class="w-full h-full"
+                                            preserveAspectRatio="xMidYMid slice">
+                                            <image href="referencia.jpeg" width="1448" height="1086" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[11px] font-bold text-white">Identidade Corporativa integraCX</p>
+                                        <p class="text-[10px] text-gray-300/75">Clique em "Ver Frente Institucional"
+                                            acima para girar o cartão 3D.</p>
+                                    </div>
+                                </div>
+                                <button type="button" data-lightbox-viewbox="2 686 399 374"
+                                    data-lightbox-caption="Cartão de Visitas Institucional integraCX — Frente Azul-Marinho (#0F2D4A) e Verso Off-White (#F9F8F4)"
+                                    class="lightbox-trigger text-[10px] font-semibold text-brand-tan hover:underline whitespace-nowrap px-2 py-1">
+                                    Ver impresso ↗
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Recorte curvo/diagonal na base da seção escura (Fiel ao Template) -->
+                <svg class="absolute bottom-0 left-0 w-full h-10 md:h-14 text-brand-light" viewBox="0 0 1440 56"
+                    fill="currentColor" preserveAspectRatio="none">
+                    <path d="M0,24 C480,64 960,52 1440,0 L1440,56 L0,56 Z"></path>
+                </svg>
+            </div>
+
+            <!-- PARTE 2: Galeria "Nosso Espaço & Estrutura" (Fotos Reais extraídas de referencia.jpeg) -->
+            <div class="relative z-20 mx-auto max-w-6xl px-5 md:px-8 -mt-12 md:-mt-16 pb-20 md:pb-24">
+                <div
+                    class="bg-white border border-brand-dark/10 shadow-elevated rounded-[4px] p-6 sm:p-8 md:p-10 reveal opacity-0 translate-y-8 transition-all duration-700 ease-out">
+
+                    <!-- Cabeçalho da Galeria do Local -->
+                    <div
+                        class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-5 border-b border-brand-dark/10">
+                        <div>
+                            <p class="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-brand-softBlue">
+                                AMBIENTE & IDENTIDADE PRESENCIAL
+                            </p>
+                            <h3 class="text-xl sm:text-2xl font-extrabold text-brand-dark">
+                                Conheça Nosso Espaço e Estrutura
+                            </h3>
+                        </div>
+                        <p class="text-xs sm:text-[13px] text-brand-muted max-w-md">
+                            Um ambiente projetado para receber clientes, conduzir imersões estratégicas e refletir a
+                            solidez da integraCX em cada detalhe. Clique nas imagens para ampliar.
+                        </p>
+                    </div>
+
+                    <!-- Grid de 4 Fotos do Local & Identidade (Recortes de precisão cirúrgica de referencia.jpeg) -->
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+                        <!-- Foto 1: Recepção Principal integraCX -->
+                        <div class="group cursor-pointer lightbox-trigger flex flex-col bg-brand-light border border-brand-dark/10 rounded-[3px] overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300"
+                            data-lightbox-viewbox="725 686 430 374"
+                            data-lightbox-caption="Recepção Principal integraCX — Estrutura moderna para recepção de clientes e reuniões executivas.">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-brand-dark">
+                                <svg viewBox="725 686 430 374"
+                                    class="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                                    preserveAspectRatio="xMidYMid slice">
+                                    <image href="referencia.jpeg" width="1448" height="1086" />
+                                </svg>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                                    <span
+                                        class="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
+                                        <i data-lucide="maximize-2" class="w-3 h-3"></i> Ampliar foto
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-4 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-[9px] font-bold uppercase tracking-[0.18em] text-brand-softBlue">
+                                        01 · RECEPÇÃO EXECUTIVA
+                                    </span>
+                                    <h4 class="text-xs sm:text-sm font-bold text-brand-dark mt-1">
+                                        Recepção Principal integraCX
+                                    </h4>
+                                </div>
+                                <p class="text-[11px] text-brand-muted mt-2 leading-relaxed">
+                                    Ambiente corporativo com iluminação cênica e salas de reunião integradas.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Foto 2: Lounge & Balcão de Atendimento -->
+                        <div class="group cursor-pointer lightbox-trigger flex flex-col bg-brand-light border border-brand-dark/10 rounded-[3px] overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300"
+                            data-lightbox-viewbox="957 423 275 254"
+                            data-lightbox-caption="Hall & Lounge de Atendimento — Acabamento em tons areia e azul-marinho alinhados à identidade integraCX.">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-brand-dark">
+                                <svg viewBox="957 423 275 254"
+                                    class="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                                    preserveAspectRatio="xMidYMid slice">
+                                    <image href="referencia.jpeg" width="1448" height="1086" />
+                                </svg>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                                    <span
+                                        class="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
+                                        <i data-lucide="maximize-2" class="w-3 h-3"></i> Ampliar foto
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-4 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-[9px] font-bold uppercase tracking-[0.18em] text-brand-softBlue">
+                                        02 · HALL & LOUNGE
+                                    </span>
+                                    <h4 class="text-xs sm:text-sm font-bold text-brand-dark mt-1">
+                                        Espaço de Boas-Vindas
+                                    </h4>
+                                </div>
+                                <p class="text-[11px] text-brand-muted mt-2 leading-relaxed">
+                                    Design acolhedor em pedra natural e assinatura tridimensional da marca.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Foto 3: Arquitetura & Conceito Visual -->
+                        <div class="group cursor-pointer lightbox-trigger flex flex-col bg-brand-light border border-brand-dark/10 rounded-[3px] overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300"
+                            data-lightbox-viewbox="639 423 309 254"
+                            data-lightbox-caption="Arquitetura & Movimento — Formas e curvas que traduzem Pessoas, Processos e Resultados.">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-brand-dark">
+                                <svg viewBox="639 423 309 254"
+                                    class="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                                    preserveAspectRatio="xMidYMid slice">
+                                    <image href="referencia.jpeg" width="1448" height="1086" />
+                                </svg>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                                    <span
+                                        class="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
+                                        <i data-lucide="maximize-2" class="w-3 h-3"></i> Ampliar foto
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-4 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-[9px] font-bold uppercase tracking-[0.18em] text-brand-softBlue">
+                                        03 · CONCEITO ARQUITETÔNICO
+                                    </span>
+                                    <h4 class="text-xs sm:text-sm font-bold text-brand-dark mt-1">
+                                        Curvas de Conexão
+                                    </h4>
+                                </div>
+                                <p class="text-[11px] text-brand-muted mt-2 leading-relaxed">
+                                    Painéis internos que expressam movimento, fluidez e integração entre áreas.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Foto 4: Equipe & Credencial de Consultoria -->
+                        <div class="group cursor-pointer lightbox-trigger flex flex-col bg-brand-light border border-brand-dark/10 rounded-[3px] overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300"
+                            data-lightbox-viewbox="1165 686 281 374"
+                            data-lightbox-caption="Consultoria Especializada em Campo — Credencial oficial da equipe de auditoria e consultoria integraCX.">
+                            <div class="relative aspect-[4/3] overflow-hidden bg-brand-dark">
+                                <svg viewBox="1165 686 281 374"
+                                    class="w-full h-full transition-transform duration-500 group-hover:scale-105"
+                                    preserveAspectRatio="xMidYMid slice">
+                                    <image href="referencia.jpeg" width="1448" height="1086" />
+                                </svg>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                                    <span
+                                        class="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1">
+                                        <i data-lucide="maximize-2" class="w-3 h-3"></i> Ampliar foto
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-4 flex-1 flex flex-col justify-between">
+                                <div>
+                                    <span class="text-[9px] font-bold uppercase tracking-[0.18em] text-brand-softBlue">
+                                        04 · TIME DE ESPECIALISTAS
+                                    </span>
+                                    <h4 class="text-xs sm:text-sm font-bold text-brand-dark mt-1">
+                                        Atuação In-Company
+                                    </h4>
+                                </div>
+                                <p class="text-[11px] text-brand-muted mt-2 leading-relaxed">
+                                    Consultores identificados e dedicados à imersão operacional na sua empresa.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ================= MODAL LIGHTBOX PARA AMPLIAR FOTOS DO LOCAL / CARTÃO ================= -->
+    <div id="lightbox-modal"
+        class="fixed inset-0 z-[60] hidden items-center justify-center bg-brand-darker/90 backdrop-blur-sm p-4 sm:p-6">
+        <div
+            class="relative w-full max-w-3xl bg-brand-light rounded-[4px] overflow-hidden shadow-2xl border border-white/15">
+            <div class="flex items-center justify-between px-5 py-3.5 bg-brand-dark text-white">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-tan">
+                    INTEGRACX · Visualização Detalhada
+                </span>
+                <button id="lightbox-close" type="button" aria-label="Fechar"
+                    class="p-1 text-gray-300 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="bg-brand-darker flex items-center justify-center max-h-[70vh] overflow-hidden">
+                <svg id="lightbox-svg" viewBox="725 686 430 374" class="w-full h-[340px] sm:h-[460px]"
+                    preserveAspectRatio="xMidYMid meet">
+                    <image href="referencia.jpeg" width="1448" height="1086" />
+                </svg>
+            </div>
+            <div class="px-5 py-4 bg-brand-light border-t border-brand-dark/10 flex items-center justify-between gap-4">
+                <p id="lightbox-caption" class="text-xs sm:text-sm font-semibold text-brand-dark"></p>
+                <a href="#contato" id="lightbox-cta"
+                    class="text-xs font-bold text-brand-dark hover:text-brand-softBlue whitespace-nowrap">
+                    Agendar Visita ↗
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-brand-light px-5 py-8 md:px-8 border-t border-brand-dark/10">
+        <div class="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-4 pr-12 sm:pr-14">
+            <a href="#inicio" class="inline-flex items-center focus:outline-none">
+                <img src="logo-integracx.png"
+                    alt="INTEGRACX — Cuidamos da sua empresa, Valorizamos seu cliente"
+                    class="h-8 sm:h-9 w-auto object-contain">
+            </a>
+            <p class="text-xs text-brand-muted font-medium">
+                Conexões que transformam experiências.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Botão Flutuante do WhatsApp -->
+    <a href="https://wa.me/SEUNUMERO" target="_blank" rel="noopener noreferrer" aria-label="Falar pelo WhatsApp"
+        class="fixed bottom-5 right-5 z-50 flex items-center justify-center w-11 h-11 rounded-full bg-brand-dark text-white shadow-elevated hover:bg-brand-darker hover:-translate-y-1 hover:scale-105 transition-all duration-300">
+        <i data-lucide="message-circle" class="w-5 h-5"></i>
+    </a>
+
+    <!-- ================= SCRIPTS (VANILLA JS) ================= -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Inicializa os ícones Lucide
+            lucide.createIcons();
+
+            // 2. Controle do Menu Mobile
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            if (menuBtn && mobileMenu) {
+                menuBtn.addEventListener('click', () => {
+                    const isHidden = mobileMenu.classList.contains('hidden');
+                    mobileMenu.classList.toggle('hidden', !isHidden);
+                    mobileMenu.classList.toggle('flex', isHidden);
+                });
+
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenu.classList.remove('flex');
+                    });
+                });
+            }
+
+            // 3. Scroll Reveal com IntersectionObserver
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.remove('opacity-0', 'translate-y-8');
+                        entry.target.classList.add('opacity-100', 'translate-y-0');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0.12,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // 4. Transição Suave de Tabs (Soluções)
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+
+                    tabBtns.forEach(b => {
+                        const isCurrent = b === btn;
+                        b.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+
+                        b.classList.toggle('border-l-brand-dark', isCurrent);
+                        b.classList.toggle('bg-brand-tanLight/70', isCurrent);
+                        b.classList.toggle('border-l-transparent', !isCurrent);
+
+                        const titleEl = b.querySelector('.tab-title');
+                        const numEl = b.querySelector('.tab-num');
+                        const iconEl = b.querySelector('.tab-icon');
+
+                        if (titleEl) {
+                            titleEl.classList.toggle('font-bold', isCurrent);
+                            titleEl.classList.toggle('text-brand-dark', isCurrent);
+                            titleEl.classList.toggle('font-semibold', !isCurrent);
+                            titleEl.classList.toggle('text-brand-dark/75', !isCurrent);
+                        }
+                        if (numEl) {
+                            numEl.classList.toggle('text-brand-dark/70', isCurrent);
+                            numEl.classList.toggle('text-brand-muted/70', !isCurrent);
+                        }
+                        if (iconEl) {
+                            iconEl.classList.toggle('text-brand-dark/70', isCurrent);
+                            iconEl.classList.toggle('text-brand-muted/60', !isCurrent);
+                        }
+                    });
+
+                    tabPanels.forEach(panel => {
+                        if (panel.id === targetId) {
+                            panel.classList.remove('tab-panel-hidden');
+                            panel.classList.add('tab-panel-active');
+                        } else {
+                            panel.classList.remove('tab-panel-active');
+                            panel.classList.add('tab-panel-hidden');
+                        }
+                    });
+                });
+            });
+
+            // 5. Interatividade da Seção "Onde estamos" (Link do Mapa)
+            const mapInput = document.getElementById('map-link-input');
+            const openMapBtn = document.getElementById('open-map-btn');
+            const mapStatusText = document.getElementById('map-status-text');
+            const mapBadgeText = document.getElementById('map-badge-text');
+
+            if (mapInput && openMapBtn) {
+                mapInput.addEventListener('input', () => {
+                    const url = mapInput.value.trim();
+                    if (url.startsWith('http://') || url.startsWith('https://')) {
+                        mapStatusText.textContent = 'Link de localização configurado e pronto para abertura externa.';
+                        mapBadgeText.textContent = 'MAPA DE LOCALIZAÇÃO · LINK CONFIGURADO';
+                    } else {
+                        mapStatusText.textContent = 'Mapa externo não configurado. Insira um link seguro para abrir a localização.';
+                        mapBadgeText.textContent = 'MAPA DE LOCALIZAÇÃO · CONFIGURAÇÃO PENDENTE';
+                    }
+                });
+
+                openMapBtn.addEventListener('click', () => {
+                    const url = mapInput.value.trim();
+                    if (url.startsWith('http://') || url.startsWith('https://')) {
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                    } else {
+                        mapInput.focus();
+                        mapInput.classList.add('ring-2', 'ring-red-400/60');
+                        setTimeout(() => mapInput.classList.remove('ring-2', 'ring-red-400/60'), 1200);
+                    }
+                });
+            }
+
+            // 6. Giro 3D do Cartão de Visitas Interativo (Frente / Verso)
+            const flipCardBtn = document.getElementById('flip-card-btn');
+            const flipCardLabel = document.getElementById('flip-card-label');
+            const businessCard3D = document.getElementById('business-card-3d');
+
+            if (flipCardBtn && businessCard3D) {
+                flipCardBtn.addEventListener('click', () => {
+                    const isFlipped = businessCard3D.classList.toggle('card-flipped');
+                    if (flipCardLabel) {
+                        flipCardLabel.textContent = isFlipped
+                            ? 'Ver Dados de Contato'
+                            : 'Ver Frente Institucional';
+                    }
+                });
+            }
+
+            // 7. Botão Copiar Contato no Cartão de Visitas
+            const copyVcardBtn = document.getElementById('copy-vcard-btn');
+            const copyVcardText = document.getElementById('copy-vcard-text');
+
+            if (copyVcardBtn && copyVcardText) {
+                copyVcardBtn.addEventListener('click', () => {
+                    const contactSummary = 'integraCX — Felipe Oliveira (Consultor de CX) | contato@integracx.com.br | +55 (11) 99999-0000';
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(contactSummary);
+                    }
+                    copyVcardText.textContent = 'Contato Copiado!';
+                    setTimeout(() => {
+                        copyVcardText.textContent = 'Copiar Contato';
+                    }, 2000);
+                });
+            }
+
+            // 8. Lightbox Modal para ampliar as Fotos do Local e Cartão Físico
+            const lightboxModal = document.getElementById('lightbox-modal');
+            const lightboxSvg = document.getElementById('lightbox-svg');
+            const lightboxCaption = document.getElementById('lightbox-caption');
+            const lightboxClose = document.getElementById('lightbox-close');
+            const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+            const closeLightbox = () => {
+                if (lightboxModal) {
+                    lightboxModal.classList.add('hidden');
+                    lightboxModal.classList.remove('flex');
+                }
+            };
+
+            lightboxTriggers.forEach(trigger => {
+                trigger.addEventListener('click', () => {
+                    const viewBox = trigger.getAttribute('data-lightbox-viewbox');
+                    const caption = trigger.getAttribute('data-lightbox-caption');
+                    if (lightboxSvg && viewBox) {
+                        lightboxSvg.setAttribute('viewBox', viewBox);
+                    }
+                    if (lightboxCaption && caption) {
+                        lightboxCaption.textContent = caption;
+                    }
+                    if (lightboxModal) {
+                        lightboxModal.classList.remove('hidden');
+                        lightboxModal.classList.add('flex');
+                    }
+                });
+            });
+
+            if (lightboxClose) {
+                lightboxClose.addEventListener('click', closeLightbox);
+            }
+
+            if (lightboxModal) {
+                lightboxModal.addEventListener('click', (e) => {
+                    if (e.target === lightboxModal) {
+                        closeLightbox();
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeLightbox();
+            });
+        });
+    </script>
+</body>
+
+</html>
